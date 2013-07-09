@@ -1,0 +1,23 @@
+{
+    "oxms": [
+                {
+                    "handle": "dummy1",
+                    "msgclass": "sms",
+                    "priority": 1,
+                    "backup": false,
+                    "type": "dummy",
+                    "regexes": ["(\\d{9})"]
+                }
+    ],
+
+
+    "oams": [
+                {
+                    "handle": "dummy1",
+                    "type": "dummy"
+                }
+    ],
+
+    "runas_uid": null,
+    "runas_gid": null
+}
