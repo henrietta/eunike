@@ -1,6 +1,7 @@
 class Order(object):
     """A message order to send"""
-    def __init__(self, target, content, msgclass, backend=None, qos=0):
+    def __init__(self, target, content, msgclass, backend=None, qos=0,
+                 tag=None):
         """
         An order needs at least target and content. 
         backend and qos can be calculate automatically from config
@@ -13,3 +14,5 @@ class Order(object):
         self.content = content  #: Message content. type -> unicode
         self.qos = qos          #: Priority. The bigger, the more important.
                                 # type -> integer
+        self.tag = tag          #: used for extended statistics, logged along
+                                # sent message

@@ -2,24 +2,26 @@ from eunike.routing.prepare import register_objects
 from satella.threads import BaseThread
 import heapq
 from satella.instrumentation.counters import CallbackCounter
+import pickle
 
 class RoutingLayer(BaseThread):
     def terminate(self):
         BaseThread.terminate(self)
         self.bm.on_interesting_shit()
 
-    def __init__(self, confobj, oams, oxms, insmgr):
+    def __init__(self, confobj, oams, oxms, insmgr, osm):
         """
         @type confobj: L{eunike.config.ConfigurationObject}
         @type oams: dict(handle::str => OAMInterface)
         @type oxms: dict(handle::str => OXMInterface)
         @param insmgr: Instrumentation manager
         @type insmgr: satella.instrumentation.CounterCollection
+        @param osm: OSM instance
         """
         BaseThread.__init__(self)
 
         self.config = confobj
-
+        self.osm = osm
         self.bm = None  #: public, BackendManager
 
         register_objects(self, confobj, oams, oxms, insmgr)
@@ -27,9 +29,16 @@ class RoutingLayer(BaseThread):
         self.messages = []  # heap with messages
 
         insmgr.add(CallbackCounter('messages_in_queue',
-                        lambda: len(self.messages_to_dispatch),
+                        lambda: len(self.messages),
                         None, u'Messages waiting to be sent'))
 
+        try:
+            with open(self.config['serialization_storage_path'], 'rb') as msgfin:
+                messages = pickle.load(msgfin)
+                self.messages.extend(messages)
+                heapq.heapify(self.messages)
+        except:
+            pass
 
     def run(self):
         self.bm.start()
@@ -38,7 +47,6 @@ class RoutingLayer(BaseThread):
             self.bm.wait_for_interesting_shit()
             # ------------------------- Any messages inbound?
             for msg in self.bm.get_in_messages():
-                print 'Pushed a message'
                 heapq.heappush(self.messages, 
                                (-msg.qos, msg)) # bigger QoS the better,
                                                 # but first element of heap is
@@ -62,5 +70,5 @@ class RoutingLayer(BaseThread):
         for msg in self.bm.get_in_messages():
             heapq.heappush(self.messages, (-msg.qos, msg))
 
-        print 'I would sync those messages but I don\'t want to'
-        print '%s of em' % (len(self.messages), )
+        with open(self.config['serialization_storage_path'], 'wb') as msgfout:
+            pickle.dump(self.messages, msgfout, pickle.HIGHEST_PROTOCOL)

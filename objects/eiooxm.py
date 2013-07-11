@@ -24,7 +24,19 @@ class EIOOXM(object):
         """Called by OAM. Order is passed back to routing layer
         due to some circumstances (ie. termination ordered)"""
         self.returned_messages.append(order)
-        self.bm.on_interesting_shit()
+
+    def on_fail_status(self, failstatus):
+        """Changes fail status. By default there is no fail - so it's False.
+        Setting this to True does not trigger routing layer rescan, as 
+        your report of on_order_failed should follow"""
+        self.bm.oxm[self.handle].faulty = failstatus
+
+        if not self.bm.oxm[self.handle].faulty:
+            self.bm.on_interesting_shit()
+
+    def on_sent_successfully(self, order):
+        """Called by OXM when message is sent successfully"""
+        self.bm.rlayer.osm.log_as_sent(order)
 
     def on_ready(self):
         """Called by OXM when it is ready to process next message.

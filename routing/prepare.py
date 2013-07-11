@@ -12,14 +12,14 @@ def register_objects(rlayer, confobjs, oams, oxms, insmgr):
     """
 
     eio_oam = {}
-    bem = BackendManager()
+    bem = BackendManager(rlayer)
 
     for handle, oamcls in oams.items():
         sec, = [x for x in confobjs['oams'] if x['handle'] == handle]
         cc = CounterCollection('a-%s' % (handle, ), u'OAM %s' % (handle, ))
         insmgr.add(cc)
         io = EIOOAM(handle, rlayer, bem)
-        eio_oam[handle] = oamcls(io, sec, cc), io, sec
+        eio_oam[handle] = oamcls(io, sec, cc), io, sec, cc
 
     eio_oxm = {}
 
@@ -28,7 +28,7 @@ def register_objects(rlayer, confobjs, oams, oxms, insmgr):
         cc = CounterCollection('x-%s' % (handle, ), u'OXM %s' % (handle, ))
         insmgr.add(cc)
         io = EIOOXM(handle, rlayer, bem)
-        eio_oxm[handle] = oxmcls(io, sec, cc), io, sec
+        eio_oxm[handle] = oxmcls(io, sec, cc), io, sec, cc
 
     bem.add_backends(eio_oam, eio_oxm)
 

@@ -1,23 +1,34 @@
 {
     "oxms": [
                 {
-                    "handle": "dummy1",
+                    "handle": "sms1",
                     "msgclass": "sms",
-                    "priority": 1,
-                    "backup": false,
-                    "type": "dummy",
-                    "regexes": ["(\\d{9})"]
+                    "type": "atcommand",
+                    "serial_port": "COM71",
+                    "serial_baudrate": 115200,
+
+                    "recovery_msg_target": "600000000",
+                    "recovery_msg_content": "Hello World"
                 }
     ],
 
 
     "oams": [
                 {
-                    "handle": "dummy1",
-                    "type": "dummy"
+                    "handle": "filescan1",
+                    "type": "filescan",
+                    "directory": "D:/sms"
                 }
     ],
 
+    "osm": {
+        "type": "sqlite",
+        "path": "D:/statdb.sqlite"
+    },
+
     "runas_uid": null,
-    "runas_gid": null
+    "runas_gid": null,
+
+
+    "serialization_storage_path": "D:/msgstor"
 }
