@@ -60,7 +60,6 @@ class RoutingLayer(BaseThread):
                     # item is dispatchable!
                     self.bm.dispatch(msg, dispatch)
                     self.messages.remove(elem)
-                    continue
 
             heapq.heapify(self.messages)
 

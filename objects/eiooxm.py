@@ -30,9 +30,7 @@ class EIOOXM(object):
         Setting this to True does not trigger routing layer rescan, as 
         your report of on_order_failed should follow"""
         self.bm.oxm[self.handle].faulty = failstatus
-
-        if not self.bm.oxm[self.handle].faulty:
-            self.bm.on_interesting_shit()
+        self.bm.on_interesting_shit()
 
     def on_sent_successfully(self, order):
         """Called by OXM when message is sent successfully"""

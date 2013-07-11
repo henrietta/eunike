@@ -161,9 +161,9 @@ class ExecutorThread(BaseThread):
                         continue
                 else:
                     self.conseq_reset = 0
-                    self.oxm.eio.on_ready()
                     self.oxm.eio.on_sent_successfully(self.mte)
                     self.mte = None
+                    self.oxm.eio.on_ready()
             
     def attempt_recovery(self):
         """Returns False when it's hopeless"""
