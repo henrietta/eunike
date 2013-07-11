@@ -2,6 +2,7 @@ from __future__ import print_function
 from satella.unix import daemonize, hang_until_sig
 from eunike.config import load_config
 from eunike.routing import RoutingLayer
+from eunike.instrumentation import InstrumentationSaverThread
 from satella.instrumentation import CounterCollection
 import sys
 
@@ -54,6 +55,13 @@ except ImportError:
 # Prepare insmgr
 insmgr = CounterCollection('counters')
 
+# Prepare saver thread (if necessary)
+if 'instrumentation' in cnf:
+    if cnf['instrumentation']['enabled']:
+        saver = InstrumentationSaverThread(insmgr, cnf['instrumentation'])
+        saver.start()
+
+
 # Prepare RL
 rl = RoutingLayer(cnf, dict(oams), dict(oxms), insmgr, osm).start()
 
@@ -61,13 +69,21 @@ from satella.contrib.bhtipi import BHTIPI
 
 bt = BHTIPI('127.0.0.1', 8000, insmgr).start()
 
+daemonize()
+
 hang_until_sig()
 
+try:
+    saver.terminate()
+except:
+    pass
 bt.terminate()
 rl.terminate()
 osm.i_stop()
 rl.join()
 bt.join()
 osm.i_join()
-
-#daemonize(cnf['runas_uid'], cnf['runas_gid'])
+try:
+    saver.join()
+except:
+    pass

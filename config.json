@@ -26,9 +26,11 @@
         "path": "D:/statdb.sqlite"
     },
 
-    "runas_uid": null,
-    "runas_gid": null,
+    "serialization_storage_path": "D:/msgstor",
 
-
-    "serialization_storage_path": "D:/msgstor"
+    "instrumentation": {
+        "enabled": true,
+        "save_json_to": "D:/instrumentation.json",
+        "save_interval": 5
+    }
 }
