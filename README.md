@@ -15,5 +15,3 @@ __OAM__ is a module that injects messages into the system. It collects it from d
 __OXM__ is a module that allows sending messages of given type. It handles sending messages and reporting that given source has failed, which will allow __eunike__ to retry with another module.
 
 __OSM__ is a module that handles statistics, logging sent messages and provides an interface to analyze the statistical output.
-
-__OPM__ is a module that handles presentation of the statistics.

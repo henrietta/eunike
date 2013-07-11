@@ -38,18 +38,3 @@ class OSMInterface(BackendInterface, Monitor):
     @Monitor.protect
     def i_stop(self):
         self.conn.close()        
-
-
-    # ---- statistikon
-    @Monitor.protect
-    def st_get_count_from_day(self, day):
-        """@param day: date object"""
-
-        cur = self.conn.cursor()
-
-        cur.execute('SELECT COUNT(rowid) FROM sent WHERE sent_on BETWEEN ? and (? + \'1 day\')')
-
-        x = cur.fetchall()[0][0]
-        cur.close()
-        return x
-

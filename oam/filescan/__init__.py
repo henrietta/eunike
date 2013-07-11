@@ -33,7 +33,7 @@ class FileScan(BaseThread):
                                     dt['backend'], dt['qos'], dt['tag'])
                         self.eio.on_received(ord)
                 except:
-                    raise
+                    pass
                 finally:
                     os.unlink(target)
 

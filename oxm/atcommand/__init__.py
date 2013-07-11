@@ -135,7 +135,6 @@ class ExecutorThread(BaseThread):
                         self.attempt_recovery()
                     else:
                         # success!
-                        print 'Recovered'
                         self.is_attempting_recovery = False
                         self.oxm.eio.on_fail_status(False)
                         self.conseq_reset = 0
@@ -189,7 +188,6 @@ class ExecutorThread(BaseThread):
 
     def attempt_hard_reset(self):
         """To be used in case of hard failures"""
-        print 'Hard reset attempted'
         self.serport.write(' \x1A\r\rAT+CFUN=1\r\r')
         sleep(5)
         self.serport.read(2048)
@@ -224,7 +222,6 @@ class OXMInterface(BackendInterface):
         @param order: Message to send
         @type order: L{eunike.objects.Order}
         """
-        sleep(0.1)
         self.et.mte = order
         self.et.on_interesting_shit()
 

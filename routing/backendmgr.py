@@ -15,16 +15,12 @@ class BackendDefinition(object):
         self.stopping = False
         self._faulty = False
 
-    def __repr__(self):
-        return '%s %s %s %s' % (self.handle, self.started, self.stopping, self._faulty)
-
     @property
     def faulty(self):
         return self._faulty
 
     @faulty.setter
     def faulty(self, v):
-        print 'FAULTY: %s' % (v,)
         self._faulty = v
 
 class OXMBackendDefinition(BackendDefinition):
@@ -68,7 +64,6 @@ class BackendManager(object):
     def get_dispatch(self, order):
         """Checks whether a message can be offloaded to a OXM right now.
         Will return a BackendDefinition if possible, None otherwise"""
-        print self.oxm.values()
         oxms = [x for x in self.oxm.values() if x.started and 
                                                 not x.stopping and 
                                                 not x.faulty and
@@ -113,7 +108,6 @@ class BackendManager(object):
         for eoam in [x.eio for x in self.oam.itervalues() 
                                  if len(x.eio.received_messages) > 0]:
             msgs.extend(eoam.pop_messages())
-        print msgs
         return msgs
 
     def add_backends(self, oamd, oxmd):
