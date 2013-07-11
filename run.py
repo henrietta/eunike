@@ -1,5 +1,5 @@
 from __future__ import print_function
-from satella.unix import daemonize, hang_until_sig
+from satella.unix import hang_until_sig
 from eunike.config import load_config
 from eunike.routing import RoutingLayer
 from eunike.instrumentation import InstrumentationSaverThread
@@ -68,8 +68,6 @@ rl = RoutingLayer(cnf, dict(oams), dict(oxms), insmgr, osm).start()
 from satella.contrib.bhtipi import BHTIPI
 
 bt = BHTIPI('127.0.0.1', 8000, insmgr).start()
-
-daemonize()
 
 hang_until_sig()
 
