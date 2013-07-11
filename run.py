@@ -65,21 +65,15 @@ if 'instrumentation' in cnf:
 # Prepare RL
 rl = RoutingLayer(cnf, dict(oams), dict(oxms), insmgr, osm).start()
 
-from satella.contrib.bhtipi import BHTIPI
-
-bt = BHTIPI('127.0.0.1', 8000, insmgr).start()
-
 hang_until_sig()
 
 try:
     saver.terminate()
 except:
     pass
-bt.terminate()
 rl.terminate()
 osm.i_stop()
 rl.join()
-bt.join()
 osm.i_join()
 try:
     saver.join()
