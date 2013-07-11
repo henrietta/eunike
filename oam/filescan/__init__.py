@@ -23,6 +23,8 @@ class FileScan(BaseThread):
             sleep(5)
 
             for fname in os.listdir(self.dirscan):
+                if not fname.endswith('.msg'): continue
+                
                 target = os.path.join(self.dirscan, fname)
                 try:
                     with open(target, 'rb') as fin:
