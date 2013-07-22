@@ -211,7 +211,7 @@ class OXMInterface(BackendInterface):
 
         test_message = Order(confsection['recovery_msg_target'],
                              confsection['recovery_msg_content'],
-                             'sms')
+                             'sms', None, 0, 'System')
 
         self.et = ExecutorThread(self, test_message, cc, confsection)
 
