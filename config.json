@@ -8,7 +8,16 @@
                     "serial_baudrate": 115200,
 
                     "recovery_msg_target": "600000000",
-                    "recovery_msg_content": "Hello World"
+                    "recovery_msg_content": "Hello World",
+
+                    "smtp": {
+                        "host": "smtp.host",
+                        "port": 25,
+                        "send_from": "send_from@example.com",
+                        "user": "examplelogin",
+                        "pass": "examplepassword",
+                        "notify": ["firstperson@example.com", "secondperson@example.com"]
+                    }
                 }
     ],
 

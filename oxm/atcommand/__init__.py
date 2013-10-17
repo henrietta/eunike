@@ -5,6 +5,7 @@ from satella.threads import BaseThread
 from time import sleep, time
 import serial
 from Queue import Queue
+from eunike.oxm.atcommand.notify import SMTPNotifier
 from satella.instrumentation.counters import PulseCounter, \
                                              NumericValueCounter
 
@@ -29,7 +30,9 @@ class ExecutorThread(BaseThread):
 
     def __init__(self, oxmi, recovery_message, cc, confsection):
         BaseThread.__init__(self)
+        self.name = confsection['handle']
         self.comport, self.baudrate = confsection['serial_port'], confsection['serial_baudrate']
+        self.notifier = SMTPNotifier(confsection)
         self.mk_serport()
         self.mte = None     #: message to execute
         self.interesting_shit = Lock()
@@ -137,6 +140,7 @@ class ExecutorThread(BaseThread):
                         # success!
                         self.is_attempting_recovery = False
                         self.oxm.eio.on_fail_status(False)
+                        self.notifier.notify('EUNIKE: %s left failed state' % (self.name, ))                        
                         self.conseq_reset = 0
                         break
 
@@ -149,6 +153,7 @@ class ExecutorThread(BaseThread):
                 except self.ATCommsError:
                     if not self.attempt_recovery():
                         self.oxm.eio.on_fail_status(True)
+                        self.notifier.notify('EUNIKE: %s entered failed state' % (self.name, ))
                         self.oxm.eio.on_ready() # We won't be scheduled anyway :)
                         self.oxm.eio.on_order_failed(self.mte)
                         self.mte = None
