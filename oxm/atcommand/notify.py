@@ -4,7 +4,7 @@ upon gate's failure
 """
 
 import smtplib
-
+from threading import Thread
 
 class SMTPNotifier(object):
     def __init__(self, jsonconf):
@@ -25,14 +25,23 @@ class SMTPNotifier(object):
 
     def notify(self, message):
         """Send Message to all"""
-        if self.nop: return
+        NOTThread(self, message).start()
+
+class NOTThread(Thread):
+    def __init__(self, sn, message):
+        Thread.__init__(self)
+        self.sn = sn
+        self.message = message
+
+    def run(self):
+        sn = self.sn
+
+        if sn.nop: return
         try:
-            smtpcon = smtplib.SMTP(self.host, self.port)
-            smtpcon.login(self.user, self.passw)
-            for target in self.lnotify:
-                smtpcon.sendmail(self.sendfrom, target, message)
+            smtpcon = smtplib.SMTP(sn.host, sn.port)
+            smtpcon.login(sn.user, sn.passw)
+            for target in sn.lnotify:
+                smtpcon.sendmail(sn.sendfrom, target, self.message)
             smtpcon.quit()
         except smtplib.SMTPException:
-            return
-
-
+            return        
