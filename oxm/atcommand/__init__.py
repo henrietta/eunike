@@ -73,7 +73,21 @@ class ExecutorThread(BaseThread):
         """Attempts sending the message. Raises ATCommsError if something
         failed"""
 
+        
         sms_sent_speed = time()
+        # switch to text mode
+        self.serport.write('AT+CMGF=1\r')
+        sleep(0.1)
+        k = self.serport.read(1024)
+        started_waiting_on = time()
+        while not 'OK' in k:
+            if (time() - started_waiting_on) > DASH_TIMEOUT:
+                raise self.ATCommsError()
+            sleep(0.1)
+            k += self.serport.read(1024)
+
+        if 'ERROR' in k:
+            raise self.ATCommsError(True)
 
         # transforms content into msgcnt
         msgtext = unicode_to_sane_ascii(order.content)
@@ -82,7 +96,7 @@ class ExecutorThread(BaseThread):
         k = self.serport.read(1024)
         while len(k) > 0: k = self.serport.read(1024)
 
-        self.serport.write('AT+CMGS="%s"\r' % (order.target, ))
+        self.serport.write('AT+CMGS="%s"\r' % (order.target.encode('utf8'), ))
         sleep(0.1)
         k = self.serport.read(1024)
         started_waiting_on = time()
